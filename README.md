@@ -17,6 +17,8 @@ This repository intentionally contains insecure infrastructure-as-code, applicat
 | Terraform IaC | [`terraform/main.tf`](terraform/main.tf) | Public S3 bucket, open security group, hard-coded credentials |
 | Additional IaC | [`iac/`](iac/) | Insecure CloudFormation and Kubernetes manifests |
 | SonarQube config | [`sonar-project.properties`](sonar-project.properties) | Points scanners to vulnerable sources |
+| Web vulnerability catalog | [`web_vulnerabilities.csv`](web_vulnerabilities.csv) | 300 web-specific sample findings for testing |
+| Web SAST target pack | [`web-sast-targets/`](web-sast-targets/) | 200+ vulnerable web endpoints in Node.js, Python, PHP, and Ruby |
 
 ## Suggested Scans
 
@@ -29,5 +31,7 @@ Use the files in this repository to exercise the following security tools:
 - **Semgrep (multilang):** extend scans to [`ruby-app/insecure.rb`](ruby-app/insecure.rb) and [`go-app/main.go`](go-app/main.go) for additional rule coverage.
 - **ShellCheck:** lint [`scripts/insecure.sh`](scripts/insecure.sh) and [`scripts/unsafe_backup.sh`](scripts/unsafe_backup.sh) to find shell scripting mistakes.
 - **SonarQube:** run against the repository using [`sonar-project.properties`](sonar-project.properties) to surface code quality and security hotspots.
+- **Custom tooling or test data needs:** leverage [`web_vulnerabilities.csv`](web_vulnerabilities.csv) as a ready-made catalog of 300 web-specific sample vulnerabilities, including context, impact, and mitigation guidance for automation or documentation exercises.
+- **SAST benchmarking:** target [`web-sast-targets/`](web-sast-targets/) to validate rules against real code samples covering SQL injection, command execution, XSS, SSRF, template injection, and file-handling flaws across multiple web stacks.
 
 > **Warning:** Never deploy this code to production. It is intentionally insecure and is provided only for testing and demonstration purposes.
