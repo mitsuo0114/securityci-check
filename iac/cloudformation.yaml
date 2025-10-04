@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Insecure CloudFormation template for security scanning demos
+
+Parameters:
+  DBPassword:
+    Type: String
+    Default: password123
+    NoEcho: false
+
+Resources:
+  InsecureSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow everything
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+
+  PublicS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: vulnerable-demo-bucket
+      AccessControl: PublicReadWrite
+      VersioningConfiguration:
+        Status: Suspended
+
+  WeakRDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: weak-database
+      AllocatedStorage: '5'
+      DBInstanceClass: db.t2.micro
+      Engine: mysql
+      MasterUsername: admin
+      MasterUserPassword: !Ref DBPassword
+      PubliclyAccessible: true
+      BackupRetentionPeriod: 0
+      StorageEncrypted: false
+
+Outputs:
+  BucketName:
+    Value: !Ref PublicS3Bucket
+    Description: Name of the publicly exposed bucket

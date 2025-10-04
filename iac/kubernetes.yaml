@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insecure-app
+  template:
+    metadata:
+      labels:
+        app: insecure-app
+    spec:
+      hostNetwork: true
+      containers:
+        - name: insecure-app
+          image: python:3.6
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            runAsUser: 0
+          env:
+            - name: API_TOKEN
+              value: plaintext-token
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: docker-socket
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: insecure-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: insecure-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000

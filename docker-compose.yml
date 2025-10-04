@@ -1,0 +1,23 @@
+version: '3.3'
+services:
+  vulnerable-db:
+    image: mysql:5.6
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: insecure
+    ports:
+      - "3306:3306"
+    command: ["--skip-grant-tables"]
+  vulnerable-app:
+    build: .
+    environment:
+      DATABASE_URL: mysql://root:root@vulnerable-db:3306/insecure
+      SECRET_KEY: supersecret
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app:rw
+    privileged: true
+    depends_on:
+      - vulnerable-db
